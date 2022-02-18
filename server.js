@@ -285,7 +285,7 @@ const loginBesitzer = (username, password, res) => {
         console.log("compare");
         bcrypt.compare(
           password,
-          results.rows[0].customer_password,
+          results.rows[0].owner_password,
           function (err, result) {
             if (result) {
               var payload = {
