@@ -116,8 +116,8 @@ app.get("/users", (req, res) => {
   }
 });
 
-app.get("/bcrypt", async (req, res) => {
-  res.send(await bcrypt.hash("Passw0rd", 5));
+app.get("/bcrypt/:id", async (req, res) => {
+  res.send(await bcrypt.hash(req.params.id, 5));
 });
 
 app.post("/users/register", express.urlencoded(), async function (req, res) {
@@ -164,6 +164,51 @@ app.post("/users/register", express.urlencoded(), async function (req, res) {
     }
   );
 });
+
+app.post("/users/besitzer/register", express.urlencoded(), async function (req, res) {
+    console.log("begin register");
+    const hashedPW = await bcrypt.hash(req.body.password, 5);
+    pool.query(
+      "SELECT FROM restaurantowner WHERE owner_email = $1",
+      [req.body.email],
+      function (err, row) {
+        if (err) {
+          console.log(err);
+          res.status(401).send(err);
+          return;
+        }
+        if (row.rowCount > 0) {
+          console.error("can't create user " + req.body.email);
+          res.status(409).send("An user with that username already exists");
+        } else {
+          console.log("Can create user " + req.body.email);
+          pool.query(
+            "INSERT INTO restaurantowner(owner_firstname,owner_secondname,owner_email,owner_username,owner_password,owner_phone,owner_salt) VALUES  ($1, $2, $3, $4, $5, $6,$7)",
+            [
+              req.body.firstname == undefined ? "Sample" : req.body.firstName,
+              req.body.lastname == undefined ? "name" : req.body.lastname,
+              req.body.email,
+              req.body.username == undefined
+                ? req.body.email.split("@")[0]
+                : req.body.username,
+              hashedPW,
+              "+undefined",
+              5,
+            ],
+            (error, results) => {
+              if (error) {
+                console.log(error);
+                res.status(403);
+              } else {
+                login(req.body.email, req.body.password, res);
+                console.log("User created!!");
+              }
+            }
+          );
+        }
+      }
+    );
+  });
 
 app.post("/users/data/updateUserData", (req, res) => {
   const firstName = req.body.firstName;
@@ -227,13 +272,60 @@ const login = (username, password, res) => {
   );
 };
 
+const loginBesitzer = (username, password, res) => {
+    console.log("Trying to login with " + username + " and " + password);
+    pool.query(
+      `Select * from customer where owner_email = $1`,
+      [username],
+      async (error, results) => {
+        if (error) {
+          console.log("Error: " + error);
+          return;
+        }
+        console.log("compare");
+        bcrypt.compare(
+          password,
+          results.rows[0].customer_password,
+          function (err, result) {
+            if (result) {
+              var payload = {
+                username: username,
+              };
+              var token = jwt.sign(payload, process.env.TOKEN_SECRET, {
+                algorithm: "HS256",
+                expiresIn: "15d",
+              });
+              console.log("Success");
+              console.log(token);
+  
+              res
+                .status(200)
+                .json({token:token, customer_id: results.rows[0].customer_id});
+            } else {
+              console.log("Error: " + err);
+              res.status(403).send(null);
+            }
+          }
+        );
+      }
+    );
+  };
+
 app.post("/users/login", express.urlencoded(), async function (req, res) {
   console.log("login");
 
   console.log(req.body);
 
-  login(req.body.email, req.body.password, res);
+  loginBesitzer(req.body.email, req.body.password, res);
 });
+
+app.post("/users/besitzer/login", express.urlencoded(), async function (req, res) {
+    console.log("login");
+  
+    console.log(req.body);
+  
+    login(req.body.email, req.body.password, res);
+  });
 
 app.get("/users/data/:email", express.urlencoded(), async function (req, res) {
   const email = req.params.email;
