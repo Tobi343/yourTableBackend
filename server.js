@@ -21,8 +21,6 @@ const io = require("socket.io")(server, {
   },
 });
 
-
-
 const pool = new Pool({
   user: "yfnktala",
   host: "tai.db.elephantsql.com",
@@ -215,7 +213,10 @@ const login = (username, password, res) => {
             });
             console.log("Success");
             console.log(token);
-            res.status(200).json({"token":token});
+
+            res
+              .status(200)
+              .json({ token: token, customer_id: result.rows[0].customerID });
           } else {
             console.log("Error: " + err);
             res.status(403).send(null);
