@@ -275,7 +275,7 @@ const login = (username, password, res) => {
 const loginBesitzer = (username, password, res) => {
     console.log("Trying to login with " + username + " and " + password);
     pool.query(
-      `Select * from customer where owner_email = $1`,
+      `Select * from restaurantowner where owner_email = $1`,
       [username],
       async (error, results) => {
         if (error) {
@@ -324,7 +324,7 @@ app.post("/users/besitzer/login", express.urlencoded(), async function (req, res
   
     console.log(req.body);
   
-    login(req.body.email, req.body.password, res);
+    loginBesitzer(req.body.email, req.body.password, res);
   });
 
 app.get("/users/data/:email", express.urlencoded(), async function (req, res) {
@@ -346,6 +346,26 @@ app.get("/users/data/:email", express.urlencoded(), async function (req, res) {
     res.send("not allowed");
   }
 });
+
+app.get("/users/besitzer/data/:email", express.urlencoded(), async function (req, res) {
+    const email = req.params.email;
+  
+    if (verify(req)) {
+      pool.query(
+        "SELECT * FROM restaurantowner WHERE owner_email = $1",
+        [email],
+        function (err, row) {
+          if (err) {
+            res.status(405).send("No Data found");
+          } else {
+            res.status(201).send(row.rows[0]);
+          }
+        }
+      );
+    } else {
+      res.send("not allowed");
+    }
+  });
 
 //RESTAURANTS ========================================================
 
