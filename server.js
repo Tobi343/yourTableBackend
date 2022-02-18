@@ -216,7 +216,7 @@ const login = (username, password, res) => {
 
             res
               .status(200)
-              .json(results.rows[0]);
+              .json({token:token});
           } else {
             console.log("Error: " + err);
             res.status(403).send(null);
