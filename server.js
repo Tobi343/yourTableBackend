@@ -361,7 +361,7 @@ app.get("/reservations/:id", express.urlencoded(), async function (req, res) {
 //URL: id = customer_id
 app.get("/reservation/:id", async function (req, res) {
   pool.query(
-    "Select r.customer_id, r.restaurant_id, r.reservation_date,r.reservation_time,r.reservation_personcount,r.reservation_table,r.reservation_room,r.reservation_extra,rt.restaurant_name, rt.restaurant_logo,c.customer_firstname,c.customer_secondname, c.customer_email from reservation r join restaurant rt on rt.id = r.restaurant_id join customer c on c.customer_id = r.customer_id  where c.customer_id = $1",
+    "Select r.customer_id, r.restaurant_id, r.reservation_date,r.reservation_time,r.reservation_personcount,r.reservation_table,r.reservation_room,r.reservation_extra,rt.restaurant_name, rt.restaurant_logo,c.customer_firstname,c.customer_secondname, c.customer_email from reservation r join restaurant rt on rt.id = r.restaurant_id join customer c on c.customer_id = r.customer_id  where c.customer_id = $1 order by r.reservation_date",
     [req.params.id],
     function (err, row) {
       if (err) {
