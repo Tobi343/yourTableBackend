@@ -165,7 +165,10 @@ app.post("/users/register", express.urlencoded(), async function (req, res) {
   );
 });
 
-app.post("/users/besitzer/register", express.urlencoded(), async function (req, res) {
+app.post(
+  "/users/besitzer/register",
+  express.urlencoded(),
+  async function (req, res) {
     console.log("begin register");
     const hashedPW = await bcrypt.hash(req.body.password, 5);
     pool.query(
@@ -208,7 +211,8 @@ app.post("/users/besitzer/register", express.urlencoded(), async function (req, 
         }
       }
     );
-  });
+  }
+);
 
 app.post("/users/data/updateUserData", (req, res) => {
   const firstName = req.body.firstName;
@@ -261,7 +265,7 @@ const login = (username, password, res) => {
 
             res
               .status(200)
-              .json({token:token, customer_id: results.rows[0].customer_id});
+              .json({ token: token, customer_id: results.rows[0].customer_id });
           } else {
             console.log("Error: " + err);
             res.status(403).send(null);
@@ -273,43 +277,46 @@ const login = (username, password, res) => {
 };
 
 const loginBesitzer = (username, password, res) => {
-    console.log("Trying to login with " + username + " and " + password);
-    pool.query(
-      `Select * from restaurantowner where owner_email = $1`,
-      [username],
-      async (error, results) => {
-        if (error) {
-          console.log("Error: " + error);
-          return;
-        }
-        console.log("compare");
-        bcrypt.compare(
-          password,
-          results.rows[0].owner_password,
-          function (err, result) {
-            if (result) {
-              var payload = {
-                username: username,
-              };
-              var token = jwt.sign(payload, process.env.TOKEN_SECRET, {
-                algorithm: "HS256",
-                expiresIn: "15d",
-              });
-              console.log("Success");
-              console.log(token);
-  
-              res
-                .status(200)
-                .json({token:token, customerId: results.rows[0].customer_id});
-            } else {
-              console.log("Error: " + err);
-              res.status(403).send(null);
-            }
-          }
-        );
+  console.log("Trying to login with " + username + " and " + password);
+  pool.query(
+    `Select * from restaurantowner where owner_email = $1`,
+    [username],
+    async (error, results) => {
+      if (error) {
+        console.log("Error: " + error);
+        return;
       }
-    );
-  };
+      console.log("compare");
+      bcrypt.compare(
+        password,
+        results.rows[0].owner_password,
+        function (err, result) {
+          if (result) {
+            var payload = {
+              username: username,
+            };
+            var token = jwt.sign(payload, process.env.TOKEN_SECRET, {
+              algorithm: "HS256",
+              expiresIn: "15d",
+            });
+            console.log("Success");
+            console.log(token);
+            var obj = {
+              token: token,
+              customerId: results.rows[0].customer_id,
+            };
+            console.log(obj);
+
+            res.status(200).json(obj);
+          } else {
+            console.log("Error: " + err);
+            res.status(403).send(null);
+          }
+        }
+      );
+    }
+  );
+};
 
 app.post("/users/login", express.urlencoded(), async function (req, res) {
   console.log("login");
@@ -319,13 +326,17 @@ app.post("/users/login", express.urlencoded(), async function (req, res) {
   loginBesitzer(req.body.email, req.body.password, res);
 });
 
-app.post("/users/besitzer/login", express.urlencoded(), async function (req, res) {
+app.post(
+  "/users/besitzer/login",
+  express.urlencoded(),
+  async function (req, res) {
     console.log("login");
-  
+
     console.log(req.body);
-  
+
     loginBesitzer(req.body.email, req.body.password, res);
-  });
+  }
+);
 
 app.get("/users/data/:email", express.urlencoded(), async function (req, res) {
   const email = req.params.email;
@@ -347,9 +358,12 @@ app.get("/users/data/:email", express.urlencoded(), async function (req, res) {
   }
 });
 
-app.get("/users/besitzer/data/:email", express.urlencoded(), async function (req, res) {
+app.get(
+  "/users/besitzer/data/:email",
+  express.urlencoded(),
+  async function (req, res) {
     const email = req.params.email;
-  
+
     if (verify(req)) {
       pool.query(
         "SELECT * FROM restaurantowner WHERE owner_email = $1",
@@ -365,7 +379,8 @@ app.get("/users/besitzer/data/:email", express.urlencoded(), async function (req
     } else {
       res.send("not allowed");
     }
-  });
+  }
+);
 
 //RESTAURANTS ========================================================
 
