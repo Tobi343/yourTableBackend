@@ -303,7 +303,7 @@ const loginBesitzer = (username, password, res) => {
             console.log(token);
             var obj = {
               token: token,
-              customerId: results.rows[0].customer_id,
+              ID: results.rows[0].owner_id,
             };
             console.log(obj);
 
