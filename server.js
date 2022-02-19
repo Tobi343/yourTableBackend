@@ -300,7 +300,7 @@ const loginBesitzer = (username, password, res) => {
   
               res
                 .status(200)
-                .json({token:token, customer_id: results.rows[0].customer_id});
+                .json({token:token, customerId: results.rows[0].customer_id});
             } else {
               console.log("Error: " + err);
               res.status(403).send(null);
