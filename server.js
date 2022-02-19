@@ -262,10 +262,13 @@ const login = (username, password, res) => {
             });
             console.log("Success");
             console.log(token);
+            var obj = {
+              token: token,
+              ID: results.rows[0].customer_id,
+            };
+            console.log(obj);
 
-            res
-              .status(200)
-              .json({ token: token, customer_id: results.rows[0].customer_id });
+            res.status(200).json(obj);
           } else {
             console.log("Error: " + err);
             res.status(403).send(null);
@@ -323,7 +326,7 @@ app.post("/users/login", express.urlencoded(), async function (req, res) {
 
   console.log(req.body);
 
-  loginBesitzer(req.body.email, req.body.password, res);
+  login(req.body.email, req.body.password, res);
 });
 
 app.post(
