@@ -578,6 +578,22 @@ app.post("/reservation/delete", (req, res) => {
   );
 });
 
+//COMMENTS ========================================================
+
+app.get("/comments/:id", express.urlencoded(), async function (req, res) {
+  pool.query(
+    "SELECT c.*, cu.customer_firstname, cu.customer_secondname FROM _comment c join customer cu on cu.customer_id = c.customer_id  where _restaurant_id = $1",
+    [req.params.id],
+    function (err, row) {
+      if (err) {
+        res.status(405).send("No Data found");
+      } else {
+        res.status(201).json(row.rows);
+      }
+    }
+  );
+});
+
 //========================================================
 
 const verify = (req) => {
