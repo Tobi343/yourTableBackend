@@ -601,10 +601,12 @@ app.post("/comments/:id", express.urlencoded(), async function (req, res) {
       [req.params.id,req.body.customer_id,req.body._comment,req.body._date,req.body.stars],
       function (err, row) {
         if (err) {
-          res.status(405).send("No Data found");
-        } else {
-          res.status(201).json(row.rows);
-        }
+            console.log(err);
+            res.status(301).send(err);
+          } else {
+            console.log("SUCC");
+            res.status(200).send("Erledigt");
+          }
       }
     );
   });
