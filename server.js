@@ -594,6 +594,20 @@ app.get("/comments/:id", express.urlencoded(), async function (req, res) {
   );
 });
 
+app.post("/comments/:id", express.urlencoded(), async function (req, res) {
+    pool.query(
+      "INSERT INTO _comment VALUES ($1,$2,$3,$4,$5) where _restaurant_id = $1",
+      [req.params.id,req.body.customer_id,req.body._comment,req.body._date,req.body.stars],
+      function (err, row) {
+        if (err) {
+          res.status(405).send("No Data found");
+        } else {
+          res.status(201).json(row.rows);
+        }
+      }
+    );
+  });
+
 //========================================================
 
 const verify = (req) => {
