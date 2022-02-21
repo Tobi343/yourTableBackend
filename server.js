@@ -597,7 +597,7 @@ app.get("/comments/:id", express.urlencoded(), async function (req, res) {
 app.post("/comments/:id", express.urlencoded(), async function (req, res) {
     console.log(req.body)
    pool.query(
-      "INSERT INTO _comment VALUES ($1,$2,$3,$4,$5) where _restaurant_id = $1",
+      "INSERT INTO _comment VALUES ($1,$2,$3,$4,$5)",
       [req.params.id,req.body.customer_id,req.body._comment,req.body._date,req.body.stars],
       function (err, row) {
         if (err) {
