@@ -430,7 +430,7 @@ app.post("/restaurants/data/updateRestaurantData", (req, res) => {
   console.log(opening);
 
   pool.query(
-    "UPDATE RESTAURANT SET restaurant_name = $1, restaurant_address = $2, restaurant_logo = $3, restaura_image = $4, details = $5, restaurant_layout = $6, opening = $7  WHERE id = $8",
+    "UPDATE RESTAURANT SET restaurant_name = $1, restaurant_address = $2, restaurant_logo = $3, restaurant_image = $4, details = $5, restaurant_layout = $6, opening = $7  WHERE id = $8",
     [name, address, logo, image, details, layout, opening, id],
     function (err, row) {
       if (err) {
