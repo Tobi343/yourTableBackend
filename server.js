@@ -221,7 +221,7 @@ app.post("/users/data/updateUserData", (req, res) => {
   const email = req.body.email;
   const username =
     req.body.userName == undefined ? email.split("@")[0] : req.body.userName;
-  console.log("name: " + userName);
+  console.log("name: " + username);
 
   pool.query(
     "UPDATE CUSTOMER SET customer_firstname = $1, customer_secondname = $2, customer_phone = $3, customer_username = $4 WHERE customer_email = $5",
