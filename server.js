@@ -219,7 +219,7 @@ app.post("/users/data/updateUserData", (req, res) => {
   const lastName = req.body.lastName;
   const phone = req.body.phone;
   const email = req.body.email;
-  const username = req.body.userName;
+  const username = req.body.userName ==undefined ? email.split("@")[0]:req.body.userName;
   console.log("name: " + userName);
 
   pool.query(
