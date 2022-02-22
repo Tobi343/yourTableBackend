@@ -219,7 +219,8 @@ app.post("/users/data/updateUserData", (req, res) => {
   const lastName = req.body.lastName;
   const phone = req.body.phone;
   const email = req.body.email;
-  const username = req.body.userName ==undefined ? email.split("@")[0]:req.body.userName;
+  const username =
+    req.body.userName == undefined ? email.split("@")[0] : req.body.userName;
   console.log("name: " + userName);
 
   pool.query(
@@ -595,21 +596,28 @@ app.get("/comments/:id", express.urlencoded(), async function (req, res) {
 });
 
 app.post("/comments/:id", express.urlencoded(), async function (req, res) {
-    console.log(req.body)
-   pool.query(
-      "INSERT INTO _comment (_restaurant_id,customer_id,_comment,_date,stars,title ) VALUES ($1,$2,$3,$4,$5,$6)",
-      [req.params.id,req.body.customer_id,req.body._comment,req.body._date,req.body.stars,req.body.title],
-      function (err, row) {
-        if (err) {
-            console.log(err);
-            res.status(301).send(err);
-          } else {
-            console.log("SUCC");
-            res.status(200).send("Erledigt");
-          }
+  console.log(req.body);
+  pool.query(
+    "INSERT INTO _comment (_restaurant_id,customer_id,_comment,_date,stars,title ) VALUES ($1,$2,$3,$4,$5,$6)",
+    [
+      req.params.id,
+      req.body.customer_id,
+      req.body._comment,
+      req.body._date,
+      req.body.stars,
+      req.body.title,
+    ],
+    function (err, row) {
+      if (err) {
+        console.log(err);
+        res.status(301).send(err);
+      } else {
+        console.log("SUCC");
+        res.status(200).send("Erledigt");
       }
-    );
-  });
+    }
+  );
+});
 
 //========================================================
 
