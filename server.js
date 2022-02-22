@@ -624,6 +624,7 @@ app.post("/comments/:id", express.urlencoded(), async function (req, res) {
 const verify = (req) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
+  console.log(token)
   try {
     jwt.verify(token, process.env.TOKEN_SECRET, { algorithm: "HS256" });
     return true;
